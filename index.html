@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lonche de cumpleaños de Ruty 🌸</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lila: #F7E9C8;
+      --lila-mid: #D8B56A;
+      --lila-dark: #7A5B2E;
+      --lila-deep: #4F3A1C;
+      --rose: #F8E0B1;
+      --rose-mid: #E9A95C;
+      --rose-dark: #C57A3B;
+      --bg: #FFF9EE;
+      --bg2: #F7F0D9;
+      --text: #3F301F;
+      --text2: #5D4B30;
+      --text3: #8E7050;
+      --border: #D8B56A;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--bg2);
+      min-height: 100vh;
+      padding: 0;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* --- ANIMACIÓN DEL SOBRE --- */
+    #envelope-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .env-wrapper {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      -webkit-tap-highlight-color: transparent; /* Evita parpadeos grises en móviles */
+    }
+
+    .env-wrapper:hover {
+      transform: translateY(-5px);
+    }
+
+    .env-back {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--lila-mid);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(123, 94, 167, 0.2);
+    }
+
+    .env-letter {
+      position: absolute;
+      bottom: 5px;
+      left: 10px;
+      width: 280px;
+      height: 180px;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--lila);
+    }
+
+    .env-letter-content {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      color: var(--lila-dark);
+      font-style: italic;
+    }
+
+    .env-front {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-left: 150px solid var(--rose);
+      border-right: 150px solid var(--rose);
+      border-bottom: 110px solid var(--rose-mid);
+      border-top: 90px solid transparent;
+      border-radius: 0 0 8px 8px;
+      pointer-events: none;
+    }
+
+    .env-flap {
+      position: absolute;
+      top: 0; left: 0; width: 0; height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 110px solid var(--lila);
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .env-seal {
+      position: absolute;
+      bottom: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 55px;
+      height: 55px;
+      background: var(--lila-dark);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: opacity 0.3s;
+      pointer-events: none;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.05); }
+    }
+
+    .env-wrapper.is-open .env-flap {
+      transform: rotateX(180deg);
+    }
+
+    .env-wrapper.is-open .env-letter {
+      transform: translateY(-90px);
+    }
+
+    .env-wrapper.is-open .env-seal {
+      opacity: 0;
+      animation: none;
+    }
+
+    .hide-envelope {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* --- ESTILOS DE LA INVITACIÓN --- */
+    #form-view {
+      display: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    .top-accent {
+      height: 3px;
+      background: linear-gradient(90deg, var(--rose-mid), var(--lila-mid), var(--rose-mid));
+      border-radius: 2px;
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .header { text-align: center; margin-bottom: 1.5rem; }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--lila-dark);
+      margin-bottom: 1rem;
+    }
+
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--lila-dark);
+      margin-bottom: 1rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin: 1.25rem auto;
+      max-width: 320px;
+    }
+
+    .divider-line { flex: 1; height: 0.5px; background: var(--lila-mid); }
+    .divider-diamond { width: 6px; height: 6px; background: var(--lila-mid); transform: rotate(45deg); }
+
+    .heart-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15.5px;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text2);
+      text-align: center;
+      max-width: 460px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.85;
+      padding: 0 0.5rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      max-width: 520px;
+      margin: 0 auto 1.25rem;
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--lila-mid);
+      display: block;
+      box-shadow: 0 8px 18px rgba(123, 94, 167, 0.08);
+    }
+
+    .karaoke-hero {
+      max-width: 860px;
+      width: 100%;
+      margin: 1.5rem auto 2rem;
+      overflow: hidden;
+      border-radius: 16px;
+      background: linear-gradient(90deg, var(--rose), var(--lila));
+      animation: floatHero 5s ease-in-out infinite;
+    }
+
+    .karaoke-hero svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    @keyframes floatHero {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .info-card {
+      background: var(--lila);
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem;
+      max-width: 520px;
+      margin: 0 auto 1.25rem;
+    }
+
+    .info-card-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--lila-dark);
+      margin-bottom: 1.1rem;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 0.85rem;
+    }
+
+    .info-row:last-child { margin-bottom: 0; }
+
+    .info-icon {
+      font-size: 16px;
+      color: var(--lila-dark);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .info-main {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--lila-deep);
+      line-height: 1.4;
+    }
+
+    .info-sub {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--lila-dark);
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+
+    .tag-parrilla {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--rose);
+      border: 0.5px solid var(--rose-mid);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--rose-dark);
+      font-weight: 500;
+      margin-top: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .ig-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--lila-dark);
+      text-decoration: none;
+      margin-top: 8px;
+      font-weight: 400;
+      border-bottom: 0.5px solid var(--lila-mid);
+      padding-bottom: 1px;
+      transition: color 0.2s;
+    }
+
+    .ig-link:hover { color: var(--lila-deep); }
+
+    .card {
+      background: var(--bg);
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      max-width: 520px;
+      margin: 0 auto 1.25rem;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lila-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .field { margin-bottom: 1.25rem; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      background: var(--lila);
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      resize: none;
+      appearance: none;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--lila-dark);
+      background: var(--bg);
+    }
+
+    .attend-group { display: flex; gap: 10px; margin-bottom: 1rem; }
+
+    .attend-btn {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-md);
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .attend-btn:hover { background: var(--lila); color: var(--lila-deep); }
+    .attend-btn.selected-yes { background: var(--lila); border-color: var(--lila-dark); color: var(--lila-deep); font-weight: 500; }
+    .attend-btn.selected-no { background: var(--rose); border-color: var(--rose-dark); color: var(--rose-dark); font-weight: 500; }
+
+    .plus1-section {
+      display: none;
+      background: var(--lila);
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .plus1-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .plus1-icon {
+      font-size: 16px;
+      color: var(--lila-dark);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .plus1-text {
+      font-size: 12.5px;
+      color: var(--text2);
+      font-weight: 300;
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+    }
+
+    .plus1-text strong { font-weight: 500; color: var(--lila-deep); }
+
+    .select-wrap { position: relative; }
+
+    .select-wrap select {
+      width: 100%;
+      background: var(--bg);
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-md);
+      padding: 9px 14px;
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .select-wrap select:focus { border-color: var(--lila-dark); }
+
+    .select-arrow {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--lila-dark);
+      pointer-events: none;
+    }
+
+    .later-note {
+      margin-top: 1rem;
+      background: var(--rose);
+      border: 0.5px solid var(--rose-mid);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      font-size: 12.5px;
+      color: var(--rose-dark);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .later-note a { color: var(--rose-dark); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+
+    .latinchat-hint {
+      font-size: 11px;
+      color: var(--lila-dark);
+      margin-top: 0.6rem;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--lila-dark);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:active { opacity: 0.65; }
+
+    .note-card { max-width: 520px; margin: 0 auto; text-align: center; padding: 0.75rem; }
+
+    .note-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-style: italic;
+      color: var(--lila-dark);
+      line-height: 1.7;
+    }
+
+    /* --- MESA DE BOCADITOS --- */
+    .bocaditos-section {
+      max-width: 520px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .bocaditos-title {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--lila-deep);
+      margin-bottom: 0.4rem;
+    }
+
+    .bocaditos-subtitle {
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--lila-dark);
+      font-weight: 500;
+      margin-bottom: 1.1rem;
+    }
+
+    .bocaditos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .bocadito-card {
+      background: var(--bg);
+      border: 0.5px solid var(--lila-mid);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(120, 90, 50, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .bocadito-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(120, 90, 50, 0.14);
+    }
+
+    .bocadito-img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .bocadito-label {
+      padding: 8px 8px 10px;
+      text-align: center;
+    }
+
+    .bocadito-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--lila-deep);
+      display: block;
+      line-height: 1.3;
+    }
+
+    .bocadito-desc {
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 300;
+      margin-top: 2px;
+      display: block;
+    }
+
+    @media (max-width: 380px) {
+      .bocaditos-grid { grid-template-columns: 1fr; }
+      .bocadito-img { height: 140px; }
+    }
+
+    /* Success */
+    .success-screen {
+      display: none;
+      text-align: center;
+      max-width: 520px;
+      margin: 3rem auto;
+      padding: 2rem;
+    }
+
+    .success-icon { font-size: 36px; color: var(--lila-dark); margin-bottom: 1.5rem; }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      color: var(--lila-deep);
+    }
+
+    .success-msg {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text2);
+      line-height: 1.8;
+    }
+
+    .attendance-note {
+      font-size: 13px;
+      color: var(--lila-dark);
+      margin-top: 1rem;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    @media (max-width: 480px) {
+      .title { font-size: 38px; }
+      .card, .info-card { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="envelope-screen">
+    <div class="env-wrapper" id="sobre-animado">
+      <div class="env-back"></div>
+      <div class="env-letter">
+        <div class="env-letter-content">¡Sorpresa! 🌸</div>
+      </div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">Abrir</div>
+    </div>
+  </div>
+
+  <div id="form-view">
+    <div class="top-accent"></div>
+
+    <div class="header">
+      <p class="eyebrow">Una invitación personal</p>
+      <h1 class="title">Celebra la vida conmigo</h1>
+      <p class="subtitle">— Ruty</p>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-diamond"></div>
+        <div class="divider-line"></div>
+      </div>
+    </div>
+
+    <p class="heart-quote">
+      Acompáñame a una tarde lonche de otoño junto con bocaditos y risas
+    </p>
+
+    <div class="gallery" style="grid-template-columns: 1fr;">
+      <img
+        src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80"
+        alt="Lonche de otoño"
+        class="gallery-img"
+        style="height: 320px; object-fit: cover;"
+      >
+    </div>
+
+    <div class="info-card">
+      <p class="info-card-label">Detalles del lonche</p>
+
+      <div class="info-row">
+        <i class="ti ti-calendar info-icon"></i>
+        <div>
+          <p class="info-main">Viernes 26 de junio</p>
+          <p class="info-sub">¡Una noche muy especial!</p>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <i class="ti ti-clock info-icon"></i>
+        <div>
+          <p class="info-main">4:00 PM</p>
+          <p class="info-sub">Hora de comenzar la celebración</p>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <i class="ti ti-home info-icon"></i>
+        <div>
+          <p class="info-main">En mi casa</p>
+          <p class="info-sub">Te espero con alegría y buena música</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bocaditos-section">
+      <p class="bocaditos-title">Mesa de Bocaditos</p>
+      <p class="bocaditos-subtitle">Pequeños placeres para el lonche</p>
+      <div class="bocaditos-grid">
+
+        <div class="bocadito-card">
+          <img
+            src="https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=400&q=80"
+            alt="Empanaditas pequeñas"
+            class="bocadito-img"
+          >
+          <div class="bocadito-label">
+            <span class="bocadito-name">Empanaditas</span>
+            <span class="bocadito-desc">Recién horneadas</span>
+          </div>
+        </div>
+
+        <div class="bocadito-card">
+          <img
+            src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80"
+            alt="Pancitos pequeños"
+            class="bocadito-img"
+          >
+          <div class="bocadito-label">
+            <span class="bocadito-name">Pancitos</span>
+            <span class="bocadito-desc">Tiernos y esponjosos</span>
+          </div>
+        </div>
+
+        <div class="bocadito-card">
+          <img
+            src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=400&q=80"
+            alt="Cheesecakes pequeños"
+            class="bocadito-img"
+          >
+          <div class="bocadito-label">
+            <span class="bocadito-name">Chesscakes</span>
+            <span class="bocadito-desc">Cremosos y deliciosos</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="note-card">
+      <p class="note-text">
+        Te agradeceré que me confirmes tu asistencia. Estaré feliz de pasar una tarde comiendo y conversando 😊❤️🍂
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // --- Lógica del Sobre Mejorada ---
+    document.addEventListener('DOMContentLoaded', function() {
+      const sobre = document.getElementById('sobre-animado');
+
+      if (sobre) {
+        sobre.addEventListener('click', function() {
+          if (sobre.classList.contains('is-open')) return;
+
+          sobre.classList.add('is-open');
+
+          setTimeout(() => {
+            const screen = document.getElementById('envelope-screen');
+            screen.classList.add('hide-envelope');
+
+            setTimeout(() => {
+              const formView = document.getElementById('form-view');
+              formView.style.display = 'block';
+
+              setTimeout(() => {
+                formView.style.opacity = '1';
+                setTimeout(() => { screen.style.display = 'none'; }, 800);
+              }, 50);
+
+            }, 500);
+
+          }, 1400);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
